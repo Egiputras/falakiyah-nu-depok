@@ -56,8 +56,10 @@
     const top = list[0];
     const rest = list.slice(1, 7);
     let html = "";
-    html += '<article class="featured art-open" data-id="' + esc(top.id) + '">' +
-      '<div class="featured__art">' + crescentArt() + '</div>' +
+    const topArt = top.image
+      ? '<div class="featured__art" style="background-image:url(' + top.image + ');background-size:cover;background-position:center"></div>'
+      : '<div class="featured__art">' + crescentArt() + '</div>';
+    html += '<article class="featured art-open" data-id="' + esc(top.id) + '">' + topArt +
       '<div class="featured__body">' +
       '<span class="card__cat">' + esc(top.category || "Artikel") + "</span>" +
       "<h3>" + esc(top.title) + "</h3>" +
@@ -65,8 +67,10 @@
       '<span class="art-meta">' + fmtDate(top) + " · Lembaga Falakiyah NU</span>" +
       "</div></article>";
     rest.forEach((a) => {
-      html += '<article class="card art-open" data-id="' + esc(a.id) + '">' +
-        '<div class="card__top"></div><div class="card__body">' +
+      const cardTop = a.image
+        ? '<div class="card__img" style="background-image:url(' + a.image + ')"></div>'
+        : '<div class="card__top"></div>';
+      html += '<article class="card art-open" data-id="' + esc(a.id) + '">' + cardTop + '<div class="card__body">' +
         '<span class="card__cat">' + esc(a.category || "Artikel") + "</span>" +
         "<h3>" + esc(a.title) + "</h3>" +
         "<p>" + esc(a.summary || (a.body || "").slice(0, 120)) + "</p>" +
@@ -89,6 +93,7 @@
       '<span class="card__cat" id="artModalCat"></span>' +
       '<h2 id="artModalTitle"></h2>' +
       '<div class="art-modal__meta" id="artModalMeta"></div>' +
+      '<img class="art-modal__img" id="artModalImg" alt="" hidden>' +
       '<div class="art-modal__body" id="artModalBody"></div>' +
       "</div>";
     document.body.appendChild(m);
@@ -100,6 +105,8 @@
     document.getElementById("artModalCat").textContent = a.category || "Artikel";
     document.getElementById("artModalTitle").textContent = a.title || "";
     document.getElementById("artModalMeta").textContent = fmtDate(a) + " · Lembaga Falakiyah NU Kota Depok";
+    const im = document.getElementById("artModalImg");
+    if (a.image) { im.src = a.image; im.hidden = false; } else { im.removeAttribute("src"); im.hidden = true; }
     document.getElementById("artModalBody").textContent = a.body || a.summary || "";
     const m = document.getElementById("artModal"); m.hidden = false; document.body.style.overflow = "hidden";
   }
@@ -117,7 +124,9 @@
       ".art-modal__close:hover{border-color:var(--accent)}" +
       ".art-modal__box h2{font-family:'Fraunces',serif;font-size:1.7rem;margin:.5rem 0 .4rem;color:var(--ink)}" +
       ".art-modal__meta{font-size:.82rem;color:var(--faint);margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}" +
-      ".art-modal__body{white-space:pre-wrap;line-height:1.75;color:var(--ink)}";
+      ".art-modal__body{white-space:pre-wrap;line-height:1.75;color:var(--ink)}" +
+      ".card__img{height:158px;background-size:cover;background-position:center}" +
+      ".art-modal__img{width:100%;max-height:340px;object-fit:cover;border-radius:10px;margin-bottom:16px}";
     const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   }
 })();

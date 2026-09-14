@@ -69,6 +69,9 @@
   .pill--draft{background:#efe7d2;color:#8a6a12}
   .art__act{display:flex;gap:6px;flex:none}
   .empty{padding:26px 16px;color:var(--muted);text-align:center;font-size:.9rem}
+  input[type=file]{padding:.5rem .6rem;background:var(--surface-2);cursor:pointer}
+  .img-preview{display:flex;align-items:center;gap:12px;margin-top:10px}
+  .img-preview img{width:120px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--line-strong)}
   @media (max-width:560px){.row2{grid-template-columns:1fr}.art{flex-wrap:wrap}}
 </style>
 </head>
@@ -129,6 +132,9 @@
             <input id="summary" type="text" maxlength="220" placeholder="Ringkasan singkat 1-2 kalimat">
           </div>
         </div>
+        <label for="image">Gambar (opsional) <span style="font-weight:400;color:var(--muted)">— otomatis dikecilkan &amp; dikompres</span></label>
+        <input id="image" type="file" accept="image/*">
+        <div id="imgPreview" class="img-preview" hidden><img id="imgPreviewEl" alt="Pratinjau gambar"><button type="button" class="btn btn--ghost btn--sm" id="imgRemove">Hapus gambar</button></div>
         <label for="body">Isi artikel</label>
         <textarea id="body" rows="10" required placeholder="Tulis isi artikel di sini. Baris baru akan dipertahankan."></textarea>
         <label class="switch"><input id="published" type="checkbox" checked> Terbitkan (tampil di situs)</label>
@@ -162,6 +168,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     let editingId = null;
+    let currentImage = null;
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -189,6 +196,7 @@
         category: $("category").value,
         summary: $("summary").value.trim(),
         body: $("body").value.trim(),
+        image: currentImage || null,
         published: $("published").checked,
         updatedAt: serverTimestamp()
       };
@@ -204,6 +212,40 @@
       $("saveBtn").disabled = false;
     });
     $("resetBtn").addEventListener("click", resetForm);
+
+    $("image").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) { setMsg("formMsg", "File harus berupa gambar.", "err"); return; }
+      processImage(file, (url) => { currentImage = url; showPreview(url); });
+      e.target.value = "";
+    });
+    $("imgRemove").addEventListener("click", () => { currentImage = null; showPreview(null); });
+
+    function showPreview(url) {
+      const wrap = $("imgPreview");
+      if (url) { $("imgPreviewEl").src = url; wrap.hidden = false; }
+      else { $("imgPreviewEl").removeAttribute("src"); wrap.hidden = true; }
+    }
+    function processImage(file, cb) {
+      const rd = new FileReader();
+      rd.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const max = 1280; let w = img.width, h = img.height;
+          if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+          else if (h >= w && h > max) { w = Math.round(w * max / h); h = max; }
+          const c = document.createElement("canvas"); c.width = w; c.height = h;
+          c.getContext("2d").drawImage(img, 0, 0, w, h);
+          let q = 0.85, out = c.toDataURL("image/jpeg", q);
+          while (out.length > 780000 && q > 0.4) { q -= 0.1; out = c.toDataURL("image/jpeg", q); }
+          cb(out);
+        };
+        img.onerror = () => setMsg("formMsg", "Gagal membaca gambar.", "err");
+        img.src = ev.target.result;
+      };
+      rd.readAsDataURL(file);
+    }
 
     async function loadList() {
       const box = $("list");
@@ -235,6 +277,7 @@
         editingId = id;
         $("title").value = a.title || ""; $("category").value = a.category || "Umum";
         $("summary").value = a.summary || ""; $("body").value = a.body || ""; $("published").checked = !!a.published;
+        currentImage = a.image || null; showPreview(currentImage);
         $("editingTag").style.display = "inline"; $("saveBtn").textContent = "Perbarui";
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else if (act === "toggle") {
@@ -248,7 +291,8 @@
     }
 
     function resetForm() {
-      editingId = null; $("artForm").reset(); $("published").checked = true;
+      editingId = null; currentImage = null; $("artForm").reset(); $("published").checked = true;
+      showPreview(null);
       $("editingTag").style.display = "none"; $("saveBtn").textContent = "Simpan & Publikasikan";
     }
   }
