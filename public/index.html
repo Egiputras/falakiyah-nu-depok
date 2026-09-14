@@ -169,7 +169,9 @@
 
   /* qibla */
   .qibla-grid{display:grid;grid-template-columns:340px 1fr;gap:44px;align-items:center}
-  .compass-wrap{display:grid;place-items:center}
+  .compass-wrap{display:grid;place-items:center;gap:14px}
+  .compass-hint{font-size:.8rem;color:var(--muted);max-width:30ch;text-align:center;margin:0;line-height:1.5}
+  #compassBtn[disabled]{opacity:.7;cursor:default}
   .compass{width:300px;height:300px}
   .qfacts{display:flex;flex-direction:column;gap:18px}
   .qbig{display:flex;align-items:baseline;gap:14px}
@@ -329,6 +331,8 @@
   <div class="wrap qibla-grid">
     <div class="compass-wrap">
       <svg class="compass" id="compass" viewBox="0 0 300 300" aria-label="Kompas arah kiblat"></svg>
+      <button class="btn btn--pri" id="compassBtn" type="button">Aktifkan Kompas HP</button>
+      <p class="compass-hint" id="compassHint">Buka di ponsel, ketuk tombol, lalu putar HP. Jarum hijau menyatu dengan penanda emas di atas = arah kiblat.</p>
     </div>
     <div class="qfacts">
       <div class="sec-head" style="margin-bottom:6px">
@@ -583,33 +587,34 @@
   }
 
   /* ---- Compass ---- */
+  var QIBLA_AZ=qibla();
   function renderCompass(){
-    const az=qibla();
-    const svg=document.getElementById('compass');const cx=150,cy=150,R=130;
-    const ns='http://www.w3.org/2000/svg';
-    let parts=`
+    const az=QIBLA_AZ;
+    const svg=document.getElementById('compass');const cx=150,cy=150;
+    let base=`
       <circle cx="150" cy="150" r="138" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5"/>
-      <circle cx="150" cy="150" r="112" fill="none" stroke="var(--line)" stroke-width="1"/>`;
-    // ticks
+      <circle cx="150" cy="150" r="112" fill="none" stroke="var(--line)" stroke-width="1"/>
+      <circle id="alignRing" cx="150" cy="150" r="138" fill="none" stroke="var(--good)" stroke-width="3.5" opacity="0"/>`;
+    let rose='';
     for(let d=0;d<360;d+=15){
       const a=(d-90)*D2R;const r1=(d%90===0)?100:118;const r2=130;
-      parts+=`<line x1="${cx+r1*Math.cos(a)}" y1="${cy+r1*Math.sin(a)}" x2="${cx+r2*Math.cos(a)}" y2="${cy+r2*Math.sin(a)}" stroke="var(--line-strong)" stroke-width="${d%90===0?1.6:0.8}"/>`;
+      rose+=`<line x1="${cx+r1*Math.cos(a)}" y1="${cy+r1*Math.sin(a)}" x2="${cx+r2*Math.cos(a)}" y2="${cy+r2*Math.sin(a)}" stroke="var(--line-strong)" stroke-width="${d%90===0?1.6:0.8}"/>`;
     }
     const card=[['U',0],['T',90],['S',180],['B',270]];
     card.forEach(([t,d])=>{const a=(d-90)*D2R;const rr=88;
-      parts+=`<text x="${cx+rr*Math.cos(a)}" y="${cy+rr*Math.sin(a)+5}" text-anchor="middle" font-family="Fraunces,serif" font-size="16" font-weight="600" fill="${t==='U'?'var(--accent)':'var(--muted)'}">${t}</text>`;});
-    // qibla needle
+      rose+=`<text x="${cx+rr*Math.cos(a)}" y="${cy+rr*Math.sin(a)+5}" text-anchor="middle" font-family="Fraunces,serif" font-size="16" font-weight="600" fill="${t==='U'?'var(--accent)':'var(--muted)'}">${t}</text>`;});
     const qa=(az-90)*D2R;
     const tipX=cx+118*Math.cos(qa), tipY=cy+118*Math.sin(qa);
     const backX=cx-70*Math.cos(qa), backY=cy-70*Math.sin(qa);
     const perpX=Math.cos(qa+Math.PI/2), perpY=Math.sin(qa+Math.PI/2);
-    parts+=`<line x1="${backX}" y1="${backY}" x2="${tipX}" y2="${tipY}" stroke="var(--gold)" stroke-width="2" opacity=".5"/>`;
-    parts+=`<polygon points="${tipX},${tipY} ${cx+12*perpX+30*Math.cos(qa)},${cy+12*perpY+30*Math.sin(qa)} ${cx-12*perpX+30*Math.cos(qa)},${cy-12*perpY+30*Math.sin(qa)}" fill="var(--accent)"/>`;
-    // kaaba icon at tip
-    parts+=`<g transform="translate(${tipX-9},${tipY-9})"><rect width="18" height="18" rx="2" fill="var(--gold)" stroke="#241a00" stroke-width="1"/><rect y="6" width="18" height="3" fill="#241a00"/></g>`;
-    parts+=`<circle cx="150" cy="150" r="7" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`;
-    parts+=`<text x="150" y="270" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" font-weight="700" fill="var(--gold)">KIBLAT ${az.toFixed(1)}°</text>`;
-    svg.innerHTML=parts;
+    rose+=`<line x1="${backX}" y1="${backY}" x2="${tipX}" y2="${tipY}" stroke="var(--gold)" stroke-width="2" opacity=".5"/>`;
+    rose+=`<polygon id="qNeedle" points="${tipX},${tipY} ${cx+12*perpX+30*Math.cos(qa)},${cy+12*perpY+30*Math.sin(qa)} ${cx-12*perpX+30*Math.cos(qa)},${cy-12*perpY+30*Math.sin(qa)}" fill="var(--accent)"/>`;
+    rose+=`<g transform="translate(${tipX-9},${tipY-9})"><rect width="18" height="18" rx="2" fill="var(--gold)" stroke="#241a00" stroke-width="1"/><rect y="6" width="18" height="3" fill="#241a00"/></g>`;
+    let overlay=`
+      <polygon points="150,41 143,26 157,26" fill="var(--gold)"/>
+      <circle cx="150" cy="150" r="7" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>
+      <text x="150" y="272" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" font-weight="700" fill="var(--gold)">KIBLAT ${az.toFixed(1)}°</text>`;
+    svg.innerHTML=base+`<g id="rose" transform="rotate(0 150 150)">`+rose+`</g>`+overlay;
 
     document.getElementById('qiblaDeg').textContent=az.toFixed(1)+'°';
     document.getElementById('qAz').textContent=az.toFixed(2)+'° UTSB';
@@ -617,7 +622,62 @@
     document.getElementById('qDist').textContent=Math.round(qiblaDistance()).toLocaleString('id-ID')+' km';
   }
 
-  /* ---- Hijri months strip ---- */
+  /* ---- Live qibla compass (device orientation) ---- */
+  var compassStarted=false, lastHeadingAt=0;
+  function applyHeading(h){
+    const rose=document.getElementById('rose'); if(!rose) return;
+    rose.setAttribute('transform','rotate('+(-h)+' 150 150)');
+    let d=((QIBLA_AZ-h+540)%360)-180;
+    const aligned=Math.abs(d)<=5;
+    const ring=document.getElementById('alignRing'); if(ring) ring.setAttribute('opacity',aligned?'1':'0');
+    const nd=document.getElementById('qNeedle'); if(nd) nd.setAttribute('fill',aligned?'var(--good)':'var(--accent)');
+    const hint=document.getElementById('compassHint');
+    if(hint) hint.textContent=aligned?'\u2713 Anda sedang menghadap kiblat.':'Putar HP perlahan hingga jarum hijau menyatu dengan penanda emas di atas.';
+  }
+  function onOrient(e){
+    let h;
+    if(typeof e.webkitCompassHeading==='number' && !isNaN(e.webkitCompassHeading)){ h=e.webkitCompassHeading; }
+    else if(typeof e.alpha==='number' && e.alpha!==null){
+      h=360-e.alpha;
+      const so=(screen.orientation&&typeof screen.orientation.angle==='number')?screen.orientation.angle:(window.orientation||0);
+      h=(h+so)%360;
+    } else { return; }
+    if(h<0)h+=360;
+    lastHeadingAt=Date.now();
+    applyHeading(h);
+  }
+  function startCompass(){
+    if(compassStarted) return;
+    window.addEventListener('deviceorientationabsolute',onOrient,true);
+    window.addEventListener('deviceorientation',onOrient,true);
+    compassStarted=true;
+    const btn=document.getElementById('compassBtn'); if(btn){btn.textContent='Kompas Aktif';btn.disabled=true;}
+    const hint=document.getElementById('compassHint'); if(hint) hint.textContent='Putar HP perlahan. Bila jarum belum stabil, gerakkan HP membentuk angka 8 untuk kalibrasi.';
+    setTimeout(function(){
+      if(Date.now()-lastHeadingAt>2000){
+        if(hint) hint.textContent='Sensor kompas tidak terdeteksi. Fitur ini hanya berjalan di HP (bukan desktop) dan lewat HTTPS.';
+        if(btn){btn.textContent='Aktifkan Kompas HP';btn.disabled=false;}
+        compassStarted=false;
+        window.removeEventListener('deviceorientationabsolute',onOrient,true);
+        window.removeEventListener('deviceorientation',onOrient,true);
+      }
+    },2600);
+  }
+  function initCompassBtn(){
+    const btn=document.getElementById('compassBtn'); if(!btn) return;
+    btn.addEventListener('click',function(){
+      const DOE=window.DeviceOrientationEvent;
+      const hint=document.getElementById('compassHint');
+      if(DOE && typeof DOE.requestPermission==='function'){
+        DOE.requestPermission().then(function(res){
+          if(res==='granted'){ startCompass(); }
+          else if(hint){ hint.textContent='Izin sensor gerak ditolak. Aktifkan izin di pengaturan browser lalu coba lagi.'; }
+        }).catch(function(){ if(hint) hint.textContent='Perangkat ini tidak mendukung kompas. Buka situs di HP.'; });
+      } else if(DOE){ startCompass(); }
+      else if(hint){ hint.textContent='Browser ini tidak mendukung sensor orientasi. Buka situs di HP.'; }
+    });
+  }
+
   function renderMonths(){
     const h=hijri(new Date());
     const el=document.getElementById('months');
@@ -703,7 +763,7 @@
 
   /* ---- init ---- */
   document.getElementById('year').textContent=new Date().getFullYear();
-  renderPrayers();buildTicker();renderCompass();renderMonths();updateDates();setIcon();starfield();
+  renderPrayers();buildTicker();renderCompass();renderMonths();updateDates();setIcon();starfield();initCompassBtn();
   tick();setInterval(tick,1000);
 })();
 </script>
