@@ -89,7 +89,8 @@
   .ticker__item.is-next b{background:var(--gold);color:#241a00;padding:.05em .45em;border-radius:5px}
   .ticker__dot{opacity:.5}
   @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  @media (prefers-reduced-motion:reduce){.ticker__track{animation:none;white-space:normal;flex-wrap:wrap}}
+  /* Reduce-animation / battery-saver: keep the ticker scrolling (just slower), never wrap into a block */
+  @media (prefers-reduced-motion:reduce){.ticker__track{animation-duration:70s;white-space:nowrap;flex-wrap:nowrap}}
 
   /* ---------- Header ---------- */
   header.site{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);
