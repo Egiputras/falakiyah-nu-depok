@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Panel Admin — Falakiyah NU Depok</title>
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#f4efe4; --surface:#fffdf6; --surface-2:#f9f4e8; --ink:#182a24; --muted:#5d6b62;
+    --faint:#8a9389; --accent:#0f6b43; --gold:#a97e17; --line:#e3dac6; --line-strong:#d3c6a8;
+    --danger:#b23b34; --shadow:0 1px 2px rgba(24,42,36,.06),0 8px 30px rgba(24,42,36,.07);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;line-height:1.6}
+  h1,h2,h3{font-family:"Fraunces",serif;margin:0}
+  a{color:var(--accent)}
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px}
+  header.bar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar__in{display:flex;align-items:center;gap:12px;padding:12px 0}
+  .bar__mark{width:40px;height:40px;background:#fff;border:1px solid var(--line-strong);border-radius:10px;padding:3px}
+  .bar__t strong{display:block;font-family:"Fraunces",serif;font-size:1rem}
+  .bar__t span{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  #whoami{margin-left:auto;font-size:.82rem;color:var(--muted)}
+  .btn{font-family:inherit;font-weight:600;font-size:.9rem;border-radius:10px;border:1px solid transparent;padding:.6rem 1rem;cursor:pointer}
+  .btn--pri{background:var(--accent);color:#fff}
+  .btn--pri:hover{filter:brightness(1.07)}
+  .btn--ghost{background:transparent;border-color:var(--line-strong);color:var(--ink)}
+  .btn--ghost:hover{border-color:var(--accent)}
+  .btn--danger{background:transparent;border-color:var(--danger);color:var(--danger)}
+  .btn--sm{padding:.35rem .6rem;font-size:.8rem;border-radius:8px}
+  main{padding:30px 0 60px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+  /* login */
+  .login{max-width:400px;margin:8vh auto;padding:30px}
+  .login h1{font-size:1.4rem;margin-bottom:4px}
+  .login p{color:var(--muted);margin:0 0 20px;font-size:.9rem}
+  label{display:block;font-size:.8rem;font-weight:600;margin:14px 0 5px;letter-spacing:.01em}
+  input,select,textarea{width:100%;font-family:inherit;font-size:.95rem;color:var(--ink);background:var(--surface-2);
+    border:1px solid var(--line-strong);border-radius:9px;padding:.65rem .8rem}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  textarea{resize:vertical}
+  .msg{font-size:.85rem;padding:.6rem .8rem;border-radius:9px;margin-top:12px}
+  .msg--err{background:#fbe9e7;color:var(--danger);border:1px solid #efc7c2}
+  .msg--ok{background:#e7f2ec;color:var(--accent);border:1px solid #c3ddce}
+  .msg--warn{background:#fbf3dd;color:#8a6a12;border:1px solid #e6d6a6}
+  /* editor */
+  .grid{display:grid;grid-template-columns:1fr;gap:22px}
+  .panel{padding:24px}
+  .panel h2{font-size:1.15rem;margin-bottom:2px}
+  .panel .sub{color:var(--muted);font-size:.85rem;margin:0 0 16px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .switch{display:flex;align-items:center;gap:10px;margin-top:16px;font-weight:600;font-size:.9rem}
+  .switch input{width:auto}
+  .form-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  #editingTag{display:none;font-size:.78rem;color:var(--gold);font-weight:700;margin-left:8px}
+  /* list */
+  .art{display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid var(--line)}
+  .art:first-child{border-top:0}
+  .art__main{min-width:0;flex:1}
+  .art__title{font-weight:600;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .art__sub{font-size:.76rem;color:var(--faint);display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-size:.66rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:.16em .5em;border-radius:6px}
+  .pill--live{background:#e2f0e8;color:var(--accent)}
+  .pill--draft{background:#efe7d2;color:#8a6a12}
+  .art__act{display:flex;gap:6px;flex:none}
+  .empty{padding:26px 16px;color:var(--muted);text-align:center;font-size:.9rem}
+  @media (max-width:560px){.row2{grid-template-columns:1fr}.art{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap bar__in">
+    <img class="bar__mark" src="assets/nu-logo.png" alt="NU">
+    <div class="bar__t"><strong>Panel Admin</strong><span>Falakiyah NU Depok</span></div>
+    <span id="whoami"></span>
+    <button class="btn btn--ghost btn--sm" id="logoutBtn" hidden>Keluar</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- belum dikonfigurasi -->
+  <div class="card login" id="notConfigured" hidden>
+    <h1>Belum terhubung</h1>
+    <p>Firebase belum dikonfigurasi. Isi <code>firebase-config.js</code> terlebih dahulu (lihat panduan), lalu muat ulang halaman ini.</p>
+  </div>
+
+  <!-- login -->
+  <div class="card login" id="loginView" hidden>
+    <h1>Masuk Admin</h1>
+    <p>Khusus pengurus. Gunakan email &amp; sandi yang terdaftar.</p>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="pass">Kata sandi</label>
+      <input id="pass" type="password" autocomplete="current-password" required>
+      <div class="form-actions"><button class="btn btn--pri" type="submit" style="width:100%">Masuk</button></div>
+      <div id="loginMsg"></div>
+    </form>
+  </div>
+
+  <!-- editor -->
+  <div class="grid" id="editorView" hidden>
+    <section class="card panel">
+      <h2>Tulis Artikel <span id="editingTag">(sedang mengedit)</span></h2>
+      <p class="sub">Isi lalu simpan. Centang "Terbitkan" agar langsung tampil di situs.</p>
+      <form id="artForm">
+        <label for="title">Judul</label>
+        <input id="title" type="text" maxlength="140" required placeholder="mis. Hasil Rukyatul Hilal Awal Ramadan">
+        <div class="row2">
+          <div>
+            <label for="category">Kategori</label>
+            <select id="category">
+              <option>Hisab &amp; Rukyat</option>
+              <option>Rukyatul Hilal</option>
+              <option>Ilmu Hisab</option>
+              <option>Arah Kiblat</option>
+              <option>Kalender Hijriyah</option>
+              <option>Pengumuman</option>
+              <option>Umum</option>
+            </select>
+          </div>
+          <div>
+            <label for="summary">Ringkasan (tampil di kartu)</label>
+            <input id="summary" type="text" maxlength="220" placeholder="Ringkasan singkat 1-2 kalimat">
+          </div>
+        </div>
+        <label for="body">Isi artikel</label>
+        <textarea id="body" rows="10" required placeholder="Tulis isi artikel di sini. Baris baru akan dipertahankan."></textarea>
+        <label class="switch"><input id="published" type="checkbox" checked> Terbitkan (tampil di situs)</label>
+        <div class="form-actions">
+          <button class="btn btn--pri" type="submit" id="saveBtn">Simpan &amp; Publikasikan</button>
+          <button class="btn btn--ghost" type="button" id="resetBtn">Bersihkan</button>
+        </div>
+        <div id="formMsg"></div>
+      </form>
+    </section>
+
+    <section class="card panel">
+      <h2>Artikel</h2>
+      <p class="sub">Klik Edit untuk mengubah, atau Terbitkan/Sembunyikan untuk mengatur tampil.</p>
+      <div id="list"><div class="empty">Memuat…</div></div>
+    </section>
+  </div>
+</main>
+
+<script src="firebase-config.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const $ = (id) => document.getElementById(id);
+  const cfg = window.FALAK_FB;
+  if (!cfg || !cfg.apiKey) { $("notConfigured").hidden = false; }
+  else {
+    const app = initializeApp(cfg);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    let editingId = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        $("loginView").hidden = true; $("editorView").hidden = false;
+        $("logoutBtn").hidden = false; $("whoami").textContent = user.email || "";
+        loadList();
+      } else {
+        $("editorView").hidden = true; $("logoutBtn").hidden = true; $("whoami").textContent = "";
+        $("loginView").hidden = false;
+      }
+    });
+
+    $("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      setMsg("loginMsg", "", "");
+      try { await signInWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value); }
+      catch (err) { setMsg("loginMsg", "Gagal masuk: " + friendly(err), "err"); }
+    });
+    $("logoutBtn").addEventListener("click", () => signOut(auth));
+
+    $("artForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = {
+        title: $("title").value.trim(),
+        category: $("category").value,
+        summary: $("summary").value.trim(),
+        body: $("body").value.trim(),
+        published: $("published").checked,
+        updatedAt: serverTimestamp()
+      };
+      if (!data.title || !data.body) { setMsg("formMsg", "Judul dan isi wajib diisi.", "err"); return; }
+      $("saveBtn").disabled = true;
+      try {
+        if (editingId) { await updateDoc(doc(db, "articles", editingId), data); }
+        else { data.createdAt = serverTimestamp(); await addDoc(collection(db, "articles"), data); }
+        resetForm();
+        setMsg("formMsg", data.published ? "Tersimpan & terbit di situs." : "Tersimpan sebagai draf.", "ok");
+        loadList();
+      } catch (err) { setMsg("formMsg", "Gagal menyimpan: " + friendly(err), "err"); }
+      $("saveBtn").disabled = false;
+    });
+    $("resetBtn").addEventListener("click", resetForm);
+
+    async function loadList() {
+      const box = $("list");
+      try {
+        const snap = await getDocs(query(collection(db, "articles"), orderBy("createdAt", "desc")));
+        const items = [];
+        snap.forEach((d) => items.push(Object.assign({ id: d.id }, d.data())));
+        if (!items.length) { box.innerHTML = '<div class="empty">Belum ada artikel. Tulis artikel pertama Anda di atas.</div>'; return; }
+        box.innerHTML = items.map((a) => {
+          const d = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate() : null;
+          const tgl = d ? d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "—";
+          const pill = a.published ? '<span class="pill pill--live">Terbit</span>' : '<span class="pill pill--draft">Draf</span>';
+          return '<div class="art">' +
+            '<div class="art__main"><div class="art__title">' + esc(a.title) + '</div>' +
+            '<div class="art__sub">' + pill + '<span>' + esc(a.category || "") + '</span><span>' + tgl + '</span></div></div>' +
+            '<div class="art__act">' +
+            '<button class="btn btn--ghost btn--sm" data-act="edit" data-id="' + a.id + '">Edit</button>' +
+            '<button class="btn btn--ghost btn--sm" data-act="toggle" data-id="' + a.id + '" data-pub="' + (a.published ? 1 : 0) + '">' + (a.published ? "Sembunyikan" : "Terbitkan") + '</button>' +
+            '<button class="btn btn--danger btn--sm" data-act="del" data-id="' + a.id + '">Hapus</button>' +
+            '</div></div>';
+        }).join("");
+        box.querySelectorAll("button[data-act]").forEach((b) => b.addEventListener("click", () => onAct(b.dataset.act, b.dataset.id, b.dataset.pub, items)));
+      } catch (err) { box.innerHTML = '<div class="empty">Gagal memuat: ' + esc(friendly(err)) + '</div>'; }
+    }
+
+    async function onAct(act, id, pub, items) {
+      if (act === "edit") {
+        const a = items.find((x) => x.id === id); if (!a) return;
+        editingId = id;
+        $("title").value = a.title || ""; $("category").value = a.category || "Umum";
+        $("summary").value = a.summary || ""; $("body").value = a.body || ""; $("published").checked = !!a.published;
+        $("editingTag").style.display = "inline"; $("saveBtn").textContent = "Perbarui";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (act === "toggle") {
+        try { await updateDoc(doc(db, "articles", id), { published: pub !== "1", updatedAt: serverTimestamp() }); loadList(); }
+        catch (err) { alert("Gagal: " + friendly(err)); }
+      } else if (act === "del") {
+        if (!confirm("Hapus artikel ini secara permanen?")) return;
+        try { await deleteDoc(doc(db, "articles", id)); if (editingId === id) resetForm(); loadList(); }
+        catch (err) { alert("Gagal: " + friendly(err)); }
+      }
+    }
+
+    function resetForm() {
+      editingId = null; $("artForm").reset(); $("published").checked = true;
+      $("editingTag").style.display = "none"; $("saveBtn").textContent = "Simpan & Publikasikan";
+    }
+  }
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+  function setMsg(id, text, kind) { const el = document.getElementById(id); if (!text) { el.innerHTML = ""; return; } el.innerHTML = '<div class="msg msg--' + (kind === "err" ? "err" : kind === "ok" ? "ok" : "warn") + '">' + esc(text) + '</div>'; }
+  function friendly(err) {
+    const c = (err && err.code) || "";
+    if (c.includes("invalid-credential") || c.includes("wrong-password") || c.includes("user-not-found")) return "email atau sandi salah.";
+    if (c.includes("too-many-requests")) return "terlalu banyak percobaan, coba lagi nanti.";
+    if (c.includes("permission-denied")) return "izin ditolak (cek Security Rules / login).";
+    if (c.includes("network")) return "masalah jaringan.";
+    return (err && err.message) || "kesalahan tak dikenal.";
+  }
+</script>
+</body>
+</html>
