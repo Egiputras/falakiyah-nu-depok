@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0f6b43">
+<meta name="description" content="Lembaga Falakiyah NU Kota Depok - jadwal waktu sholat, arah kiblat, kalender Hijriyah, serta kabar hisab dan rukyat.">
+<meta property="og:title" content="Lembaga Falakiyah NU Kota Depok">
+<meta property="og:description" content="Jadwal sholat, arah kiblat, kalender Hijriyah, hisab dan rukyat.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg">
+<title>Lembaga Falakiyah NU Kota Depok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Amiri:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#f4efe4; --surface:#fffdf6; --surface-2:#f9f4e8;
+    --ink:#182a24; --muted:#5d6b62; --faint:#8a9389;
+    --accent:#0f6b43; --accent-soft:#0f6b4318;
+    --gold:#a97e17; --gold-soft:#a97e1720;
+    --line:#e3dac6; --line-strong:#d3c6a8;
+    --star:#0f6b43;
+    --hero-1:#10352a; --hero-2:#0b241d; --hero-ink:#f2efe4; --hero-muted:#a9c2b3;
+    --good:#0f6b43; --now:#a97e17;
+    --shadow:0 1px 2px rgba(24,42,36,.06),0 8px 30px rgba(24,42,36,.07);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#081019; --surface:#0d1a26; --surface-2:#0a1622;
+      --ink:#edf2ee; --muted:#93a89e; --faint:#6a7f77;
+      --accent:#37d585; --accent-soft:#37d58518;
+      --gold:#d9b44a; --gold-soft:#d9b44a1e;
+      --line:#1b2f3f; --line-strong:#274056;
+      --star:#cfe6d8;
+      --hero-1:#0c2620; --hero-2:#060f18; --hero-ink:#f2efe4; --hero-muted:#9fbcac;
+      --good:#37d585; --now:#d9b44a;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#081019; --surface:#0d1a26; --surface-2:#0a1622;
+    --ink:#edf2ee; --muted:#93a89e; --faint:#6a7f77;
+    --accent:#37d585; --accent-soft:#37d58518;
+    --gold:#d9b44a; --gold-soft:#d9b44a1e;
+    --line:#1b2f3f; --line-strong:#274056;
+    --star:#cfe6d8;
+    --hero-1:#0c2620; --hero-2:#060f18; --hero-ink:#f2efe4; --hero-muted:#9fbcac;
+    --good:#37d585; --now:#d9b44a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:"Fraunces","Plus Jakarta Sans",serif;font-weight:600;text-wrap:balance;line-height:1.15;margin:0}
+  .mono{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+  .arabic{font-family:"Amiri",serif}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  .eyebrow{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+
+  /* ---------- Running text ticker ---------- */
+  .ticker{
+    position:sticky;top:0;z-index:50;
+    background:var(--accent);color:#fff;
+    border-bottom:1px solid rgba(0,0,0,.12);
+    overflow:hidden;white-space:nowrap;
+    display:flex;align-items:center;
+  }
+  .ticker__tag{
+    flex:none;display:flex;align-items:center;gap:.5em;
+    background:rgba(0,0,0,.22);padding:.5rem 1rem;font-size:.74rem;
+    font-weight:700;letter-spacing:.08em;text-transform:uppercase;z-index:2;
+  }
+  .ticker__tag svg{width:15px;height:15px}
+  .ticker__viewport{overflow:hidden;flex:1}
+  .ticker__track{display:inline-flex;gap:0;padding:.5rem 0;animation:scroll 44s linear infinite;will-change:transform}
+  .ticker:hover .ticker__track{animation-play-state:paused}
+  .ticker__item{padding:0 1.4rem;font-size:.85rem;font-weight:500;display:inline-flex;gap:.5em;align-items:center}
+  .ticker__item b{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums}
+  .ticker__item.is-next{color:#fff}
+  .ticker__item.is-next b{background:var(--gold);color:#241a00;padding:.05em .45em;border-radius:5px}
+  .ticker__dot{opacity:.5}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){.ticker__track{animation:none;white-space:normal;flex-wrap:wrap}}
+
+  /* ---------- Header ---------- */
+  header.site{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .navrow{display:flex;align-items:center;gap:16px;padding:12px 0}
+  .brand{display:flex;align-items:center;gap:13px;text-decoration:none;margin-right:auto}
+  .brand__mark{height:48px;width:auto;flex:none;background:#fff;border-radius:12px;padding:5px 9px;border:1px solid var(--line-strong);box-shadow:var(--shadow);display:block}
+  .brand__txt strong{display:block;font-family:"Fraunces",serif;font-size:1.02rem;font-weight:600;letter-spacing:-.01em}
+  .brand__txt span{display:block;font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .nav{display:flex;gap:6px}
+  .nav a{text-decoration:none;font-size:.86rem;font-weight:500;color:var(--muted);padding:.4rem .7rem;border-radius:8px}
+  .nav a:hover{color:var(--ink);background:var(--surface-2)}
+  .theme-btn{flex:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--line-strong);
+    background:var(--surface);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+  .theme-btn:hover{border-color:var(--accent)}
+  .theme-btn svg{width:18px;height:18px}
+  @media (max-width:820px){.nav{display:none}}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;overflow:hidden;color:var(--hero-ink);
+    background:radial-gradient(120% 90% at 82% 8%,var(--hero-1),var(--hero-2) 70%)}
+  #stars{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .hero__inner{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;
+    align-items:center;padding:64px 0 72px}
+  .hero__kicker{display:inline-flex;align-items:center;gap:.6em;font-size:.74rem;letter-spacing:.15em;
+    text-transform:uppercase;font-weight:600;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);
+    padding:.35rem .8rem;border-radius:999px}
+  .hero h1{font-size:clamp(2.1rem,4.6vw,3.4rem);margin:20px 0 14px;font-weight:600;letter-spacing:-.015em}
+  .hero h1 em{font-style:italic;color:var(--gold)}
+  .hero p.lead{color:var(--hero-muted);font-size:1.04rem;max-width:34ch;margin:0}
+  .hero__cta{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:.5em;text-decoration:none;font-weight:600;font-size:.9rem;
+    padding:.72rem 1.2rem;border-radius:11px;border:1px solid transparent;cursor:pointer}
+  .btn--pri{background:var(--gold);color:#241a00}
+  .btn--pri:hover{filter:brightness(1.06)}
+  .btn--ghost{border-color:color-mix(in srgb,var(--hero-ink) 30%,transparent);color:var(--hero-ink)}
+  .btn--ghost:hover{background:color-mix(in srgb,var(--hero-ink) 10%,transparent)}
+
+  /* clock card in hero */
+  .clockcard{background:color-mix(in srgb,#000 26%,transparent);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);
+    border-radius:18px;padding:26px 26px 22px;backdrop-filter:blur(4px)}
+  .clockcard .now-label{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--hero-muted);font-weight:600}
+  .clockcard .clock{font-family:"JetBrains Mono",monospace;font-size:3rem;font-weight:700;letter-spacing:-.02em;line-height:1;margin:.25rem 0}
+  .clockcard .clock small{font-size:1.1rem;color:var(--hero-muted)}
+  .clockcard .greg{color:var(--hero-muted);font-size:.9rem}
+  .hijri-line{margin-top:16px;padding-top:16px;border-top:1px solid color-mix(in srgb,var(--hero-ink) 16%,transparent)}
+  .hijri-line .arabic{font-size:1.5rem;color:var(--gold);display:block;line-height:1.4}
+  .hijri-line .hijri-id{font-weight:600;font-size:1.02rem}
+  .countdown{margin-top:16px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    background:color-mix(in srgb,var(--gold) 14%,transparent);border-radius:12px;padding:12px 15px}
+  .countdown .lab{font-size:.78rem;color:var(--hero-muted)}
+  .countdown .nm{font-weight:700;color:var(--gold);font-family:"Fraunces",serif;font-size:1.15rem}
+  .countdown .rem{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:1.15rem}
+
+  /* ---------- Sections ---------- */
+  section.band{padding:64px 0}
+  .sec-head{max-width:60ch;margin-bottom:34px}
+  .sec-head h2{font-size:clamp(1.6rem,3vw,2.15rem);margin:.4rem 0 .5rem}
+  .sec-head p{color:var(--muted);margin:0}
+
+  /* prayer grid */
+  .jadwal-top{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;justify-content:space-between;margin-bottom:26px}
+  .loc-pill{display:inline-flex;align-items:center;gap:.5em;background:var(--surface-2);border:1px solid var(--line);
+    border-radius:999px;padding:.45rem .9rem;font-size:.84rem;font-weight:600}
+  .loc-pill svg{width:15px;height:15px;color:var(--accent)}
+  .prayers{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .ptile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 14px;
+    text-align:center;position:relative;box-shadow:var(--shadow)}
+  .ptile .pname{font-size:.82rem;font-weight:700;letter-spacing:.02em}
+  .ptile .parab{font-family:"Amiri",serif;color:var(--muted);font-size:1.05rem;margin:.1rem 0 .5rem}
+  .ptile .ptime{font-family:"JetBrains Mono",monospace;font-size:1.5rem;font-weight:700;letter-spacing:-.02em}
+  .ptile.now{border-color:var(--now);background:var(--gold-soft);box-shadow:0 0 0 1px var(--now),var(--shadow)}
+  .ptile.now::before{content:"BERLANGSUNG";position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+    background:var(--now);color:#241a00;font-size:.58rem;font-weight:800;letter-spacing:.08em;padding:.2em .6em;border-radius:6px;white-space:nowrap}
+  .ptile.sun .ptime{color:var(--muted)}
+  .jadwal-note{margin-top:16px;font-size:.8rem;color:var(--faint)}
+
+  /* qibla */
+  .qibla-grid{display:grid;grid-template-columns:340px 1fr;gap:44px;align-items:center}
+  .compass-wrap{display:grid;place-items:center}
+  .compass{width:300px;height:300px}
+  .qfacts{display:flex;flex-direction:column;gap:18px}
+  .qbig{display:flex;align-items:baseline;gap:14px}
+  .qbig .deg{font-family:"JetBrains Mono",monospace;font-size:3.2rem;font-weight:700;color:var(--accent);line-height:1}
+  .qbig .lab{color:var(--muted)}
+  .qrow{display:flex;gap:26px;flex-wrap:wrap}
+  .qitem .k{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .qitem .v{font-weight:600;font-family:"JetBrains Mono",monospace}
+  .callout{border-left:3px solid var(--gold);background:var(--gold-soft);padding:14px 18px;border-radius:0 10px 10px 0}
+  .callout strong{color:var(--gold)}
+
+  /* news */
+  .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .18s ease,border-color .18s ease}
+  .card:hover{transform:translateY(-3px);border-color:var(--accent)}
+  .card__top{height:6px;background:linear-gradient(90deg,var(--accent),var(--gold))}
+  .card__body{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .card__cat{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+  .card__body h3{font-size:1.14rem;font-weight:600}
+  .card__body p{margin:0;color:var(--muted);font-size:.92rem}
+  .card__meta{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);font-size:.78rem;color:var(--faint);
+    display:flex;justify-content:space-between}
+  .featured{grid-column:1 / -1;display:grid;grid-template-columns:1.1fr 1fr;gap:0;background:var(--surface);
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+  .featured__art{background:radial-gradient(130% 100% at 80% 20%,var(--hero-1),var(--hero-2));position:relative;min-height:260px;overflow:hidden}
+  .featured__art svg{position:absolute;inset:0;width:100%;height:100%}
+  .featured__body{padding:34px}
+  .featured__body h3{font-size:1.7rem;margin:.5rem 0 .6rem}
+  .featured__body p{color:var(--muted);margin:0 0 18px}
+
+  /* calendar strip */
+  .cal-band{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .cal-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:44px;align-items:center}
+  .months{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .months .m{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:.82rem;font-weight:600}
+  .months .m.cur{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+  .months .m span{display:block;font-size:.66rem;font-weight:500;color:var(--faint)}
+  .months .m.cur span{color:var(--accent)}
+
+  /* footer */
+  footer.site{background:var(--hero-2);color:var(--hero-ink);padding:52px 0 30px;margin-top:8px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:34px;padding-bottom:30px;
+    border-bottom:1px solid color-mix(in srgb,var(--hero-ink) 15%,transparent)}
+  .foot-grid h4{font-family:"Fraunces",serif;font-size:1.05rem;margin:0 0 12px}
+  .foot-grid p,.foot-grid a{color:var(--hero-muted);font-size:.9rem;text-decoration:none;display:block;margin-bottom:7px}
+  .foot-grid a:hover{color:var(--gold)}
+  .foot-bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:22px;
+    font-size:.82rem;color:var(--hero-muted)}
+  .foot-brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .foot-brand strong{font-family:"Fraunces",serif;font-size:1.1rem}
+
+  @media (max-width:900px){
+    .hero__inner{grid-template-columns:1fr;gap:34px;padding:44px 0 52px}
+    .qibla-grid{grid-template-columns:1fr;gap:30px}
+    .compass{width:250px;height:250px}
+    .news-grid{grid-template-columns:1fr 1fr}
+    .featured,.cal-grid{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:640px){
+    .prayers{grid-template-columns:repeat(3,1fr)}
+    .news-grid{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr}
+    .clockcard .clock{font-size:2.5rem}
+  }
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+</style>
+</head>
+<body>
+
+
+<!-- ============ RUNNING TEXT ============ -->
+<div class="ticker" aria-label="Jadwal waktu sholat berjalan">
+  <div class="ticker__tag">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    Waktu Sholat
+  </div>
+  <div class="ticker__viewport"><div class="ticker__track" id="tickerTrack"></div></div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="site">
+  <div class="wrap navrow">
+    <a class="brand" href="#beranda">
+      <img class="brand__mark" src="assets/nu-logo.png" alt="Logo Nahdlatul Ulama Kota Depok">
+      <span class="brand__txt">
+        <strong>Lembaga Falakiyah NU</strong>
+        <span>Kota Depok</span>
+      </span>
+    </a>
+    <nav class="nav">
+      <a href="#jadwal">Waktu Sholat</a>
+      <a href="#kiblat">Arah Kiblat</a>
+      <a href="#berita">Hisab &amp; Rukyat</a>
+      <a href="#kalender">Kalender Hijriyah</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" aria-label="Ganti tema terang/gelap" title="Ganti tema">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="beranda">
+  <canvas id="stars"></canvas>
+  <div class="wrap hero__inner">
+    <div>
+      <span class="hero__kicker">☾ Marhaban · Ilmu Falak Ahlussunnah wal Jama'ah</span>
+      <h1>Menetapkan waktu ibadah dengan <em>hisab</em> yang teliti dan <em>rukyat</em> yang saksama.</h1>
+      <p class="lead">Rujukan warga Nahdliyin Kota Depok untuk jadwal sholat, penentuan awal bulan Hijriyah, dan pengukuran arah kiblat.</p>
+      <div class="hero__cta">
+        <a class="btn btn--pri" href="#jadwal">Lihat Jadwal Sholat</a>
+        <a class="btn btn--ghost" href="#kiblat">Ukur Arah Kiblat</a>
+      </div>
+    </div>
+    <div class="clockcard">
+      <div class="now-label">Waktu Kota Depok · WIB</div>
+      <div class="clock mono" id="clock">--:--<small id="clockSec">:--</small></div>
+      <div class="greg" id="gregDate">—</div>
+      <div class="hijri-line">
+        <span class="arabic" id="hijriArab">—</span>
+        <span class="hijri-id" id="hijriId">—</span>
+      </div>
+      <div class="countdown">
+        <div>
+          <div class="lab">Menuju</div>
+          <div class="nm" id="nextName">—</div>
+        </div>
+        <div class="rem mono" id="nextRemain">--:--:--</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JADWAL SHOLAT ============ -->
+<section class="band" id="jadwal">
+  <div class="wrap">
+    <div class="jadwal-top">
+      <div class="sec-head" style="margin-bottom:0">
+        <span class="eyebrow">Jadwal Waktu Sholat</span>
+        <h2 id="jadwalTitle">Hari Ini di Kota Depok</h2>
+        <p>Dihitung dengan metode Kementerian Agama RI (Subuh 20°, Isya 18°) untuk titik koordinat Kota Depok, lengkap dengan ihtiyati.</p>
+      </div>
+      <div class="loc-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        6.40°LS, 106.79°BT · 121 mdpl
+      </div>
+    </div>
+    <div class="prayers" id="prayers"></div>
+    <p class="jadwal-note" id="jadwalNote">Waktu bersifat perkiraan hisab; untuk pelaksanaan ibadah harap merujuk pada azan setempat.</p>
+  </div>
+</section>
+
+<!-- ============ ARAH KIBLAT ============ -->
+<section class="band cal-band" id="kiblat">
+  <div class="wrap qibla-grid">
+    <div class="compass-wrap">
+      <svg class="compass" id="compass" viewBox="0 0 300 300" aria-label="Kompas arah kiblat"></svg>
+    </div>
+    <div class="qfacts">
+      <div class="sec-head" style="margin-bottom:6px">
+        <span class="eyebrow">Pengukuran Arah Kiblat</span>
+        <h2>Kiblat Kota Depok</h2>
+      </div>
+      <div class="qbig">
+        <span class="deg mono" id="qiblaDeg">—°</span>
+        <span class="lab">dari Utara sejati<br>(searah jarum jam)</span>
+      </div>
+      <div class="qrow">
+        <div class="qitem"><div class="k">Azimuth Kiblat</div><div class="v" id="qAz">—</div></div>
+        <div class="qitem"><div class="k">Arah Mata Angin</div><div class="v" id="qDir">Barat Laut</div></div>
+        <div class="qitem"><div class="k">Jarak ke Ka'bah</div><div class="v" id="qDist">—</div></div>
+      </div>
+      <div class="callout">
+        <strong>Rashdul Kiblat (Istiwa A'zam).</strong> Kalibrasi paling akurat dilakukan saat matahari tepat di atas Ka'bah, yakni sekitar <b>27–28 Mei</b> pukul 16.18 WIB dan <b>15–16 Juli</b> pukul 16.27 WIB. Saat itu, bayangan benda tegak lurus menunjuk lurus ke arah kiblat.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BERITA HISAB & RUKYAT ============ -->
+<section class="band" id="berita">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Wawasan Falakiyah</span>
+      <h2>Hisab, Rukyat &amp; Penetapan Awal Bulan</h2>
+      <p>Panduan dan penjelasan seputar ilmu falak, penentuan awal bulan Hijriyah, dan pengukuran arah kiblat dari Lembaga Falakiyah NU Kota Depok.</p>
+    </div>
+    <div class="news-grid">
+      <article class="featured">
+        <div class="featured__art">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" fill="none">
+            <circle cx="300" cy="120" r="70" fill="#0b241d"/>
+            <circle cx="270" cy="100" r="72" fill="var(--gold)" opacity="0.9"/>
+            <circle cx="255" cy="95" r="66" fill="#0b241d"/>
+            <g fill="#f2efe4"><circle cx="80" cy="60" r="1.6"/><circle cx="140" cy="110" r="1.2"/><circle cx="60" cy="160" r="1.8"/><circle cx="180" cy="200" r="1.3"/><circle cx="110" cy="230" r="1.5"/><circle cx="330" cy="230" r="1.4"/><circle cx="40" cy="90" r="1.1"/></g>
+            <path d="M0 250 Q120 210 240 245 T400 240 V300 H0 Z" fill="#08160f" opacity=".7"/>
+          </svg>
+        </div>
+        <div class="featured__body">
+          <span class="card__cat">Hisab &amp; Rukyat</span>
+          <h3>Bagaimana Awal Bulan Hijriyah Ditetapkan</h3>
+          <p>Lembaga Falakiyah NU memadukan <b>hisab</b> (perhitungan posisi bulan) dan <b>rukyat</b> (pengamatan hilal). Awal bulan ditetapkan apabila hilal memenuhi kriteria imkanur rukyat MABIMS: tinggi hilal minimal 3° dan elongasi minimal 6,4° saat matahari terbenam.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__top"></div>
+        <div class="card__body">
+          <span class="card__cat">Ilmu Hisab</span>
+          <h3>Memahami Hisab Hakiki Kontemporer</h3>
+          <p>Metode hisab yang dipakai NU kini menghitung posisi bulan secara hakiki (sebenarnya) berdasar data astronomi mutakhir, bukan sekadar rata-rata gerak.</p>
+          <div class="card__meta"><span>Kajian Falak</span><span>Lembaga Falakiyah NU</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__top"></div>
+        <div class="card__body">
+          <span class="card__cat">Arah Kiblat</span>
+          <h3>Panduan Verifikasi Kiblat Masjid dengan Bayangan</h3>
+          <p>Langkah praktis mengukur ulang arah kiblat mushola dan masjid menggunakan momen Rashdul Kiblat serta bantuan tongkat istiwa'.</p>
+          <div class="card__meta"><span>Panduan</span><span>Lembaga Falakiyah NU</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__top"></div>
+        <div class="card__body">
+          <span class="card__cat">Kalender</span>
+          <h3>Kriteria Baru Kalender Hijriyah Global</h3>
+          <p>Perkembangan kriteria imkanur rukyat dan dampaknya terhadap penyusunan kalender Hijriyah di Indonesia serta keseragaman hari besar Islam.</p>
+          <div class="card__meta"><span>Analisis</span><span>Lembaga Falakiyah NU</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KALENDER HIJRIYAH ============ -->
+<section class="band cal-band" id="kalender">
+  <div class="wrap cal-grid">
+    <div class="sec-head" style="margin-bottom:0">
+      <span class="eyebrow">Tanggalan Hijriyah</span>
+      <h2>Penanggalan Bulan Qomariyah</h2>
+      <p>Kalender Hijriyah dihitung berdasar peredaran bulan (qomariyah) sepanjang 12 bulan. Bulan berjalan ditandai di samping.</p>
+      <div class="callout" style="margin-top:18px">
+        <strong>Tanggal hari ini:</strong> <span id="hijriFull">—</span>
+      </div>
+    </div>
+    <div class="months" id="months"></div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">
+          <img class="brand__mark" src="assets/nu-logo.png" alt="Logo NU" style="height:44px">
+          <strong>Lembaga Falakiyah NU<br>Kota Depok</strong>
+        </div>
+        <p style="color:var(--hero-muted);max-width:34ch">Melayani umat dalam penentuan waktu ibadah, awal bulan Hijriyah, dan arah kiblat berlandaskan ilmu falak Ahlussunnah wal Jama'ah.</p>
+      </div>
+      <div>
+        <h4>Layanan</h4>
+        <a href="#jadwal">Jadwal Waktu Sholat</a>
+        <a href="#kiblat">Pengukuran Arah Kiblat</a>
+        <a href="#kalender">Kalender Hijriyah</a>
+        <a href="#berita">Hisab &amp; Rukyat</a>
+      </div>
+      <div>
+        <h4>Kontak</h4>
+        <p>Sekretariat PCNU Kota Depok</p>
+        <p>Jawa Barat, Indonesia</p>
+        <p>Melalui takmir masjid &amp; musala di lingkungan NU Kota Depok</p>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© <span id="year">2026</span> Lembaga Falakiyah Nahdlatul Ulama Kota Depok.</span>
+      <span class="arabic" style="color:var(--gold)">وَاللّٰهُ أَعْلَمُ بِالصَّوَابِ</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const LAT=-6.4025, LNG=106.7942, TZ=7, ELEV=121;
+  const KAABA_LAT=21.4225, KAABA_LNG=39.8262;
+  const D2R=Math.PI/180, R2D=180/Math.PI;
+  const sin=d=>Math.sin(d*D2R), cos=d=>Math.cos(d*D2R), tan=d=>Math.tan(d*D2R);
+  const asin=x=>R2D*Math.asin(x), acos=x=>R2D*Math.acos(x), atan2=(y,x)=>R2D*Math.atan2(y,x), acot=x=>R2D*Math.atan(1/x);
+  const fixA=a=>{a=a%360;return a<0?a+360:a;};
+  const fixH=a=>{a=a%24;return a<0?a+24:a;};
+
+  /* ---- Prayer time algorithm (PrayTimes-style, Kemenag params) ---- */
+  function jdate(y,m,d){if(m<=2){y-=1;m+=12;}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);
+    return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5;}
+  function sunPos(jd){const D=jd-2451545.0;const g=fixA(357.529+0.98560028*D);const q=fixA(280.459+0.98564736*D);
+    const L=fixA(q+1.915*sin(g)+0.020*sin(2*g));const e=23.439-0.00000036*D;
+    const RA=atan2(cos(e)*sin(L),cos(L))/15;const eqt=q/15-fixH(RA);const decl=asin(sin(e)*sin(L));
+    return {decl:decl,eqt:eqt};}
+  function midDay(jd,t){return fixH(12-sunPos(jd+t).eqt);}
+  function sunAngle(jd,lat,angle,t,dir){const decl=sunPos(jd+t).decl;const noon=midDay(jd,t);
+    const v=(-sin(angle)-sin(decl)*sin(lat))/(cos(decl)*cos(lat));
+    if(v>1||v<-1)return NaN;const T=acos(v)/15;return dir==='ccw'?noon-T:noon+T;}
+  function asrT(jd,lat,factor,t){const decl=sunPos(jd+t).decl;const a=-acot(factor+tan(Math.abs(lat-decl)));
+    return sunAngle(jd,lat,a,t,'cw');}
+
+  function computeTimes(dateObj){
+    const jd=jdate(dateObj.getFullYear(),dateObj.getMonth()+1,dateObj.getDate())-LNG/(15*24);
+    // horizon dip for elevation
+    const dip=0.833+0.0347*Math.sqrt(ELEV);
+    // guesses kept in HOURS; converted to day-portion (/24) when fed to the sun model
+    let t={fajr:5,sunrise:6,dhuhr:12,asr:13,sunset:18,isha:18};
+    for(let i=0;i<4;i++){
+      t={
+        fajr:sunAngle(jd,LAT,20,t.fajr/24,'ccw'),
+        sunrise:sunAngle(jd,LAT,dip,t.sunrise/24,'ccw'),
+        dhuhr:midDay(jd,t.dhuhr/24),
+        asr:asrT(jd,LAT,1,t.asr/24),
+        sunset:sunAngle(jd,LAT,dip,t.sunset/24,'cw'),
+        isha:sunAngle(jd,LAT,18,t.isha/24,'cw')
+      };
+    }
+    const adj=v=>fixH(v+TZ-LNG/15);
+    let r={};for(const k in t)r[k]=adj(t[k]);
+    // ihtiyati (safety margins, Kemenag)
+    r.imsak=r.fajr-10/60;
+    r.fajr+=2/60; r.dhuhr+=2/60; r.asr+=2/60; r.sunset+=2/60; r.isha+=2/60; r.sunrise-=2/60;
+    r.maghrib=r.sunset;
+    return r;
+  }
+  function hhmm(h){if(isNaN(h))return"--:--";h=fixH(h+0.5/60);const H=Math.floor(h);const M=Math.floor((h-H)*60);
+    return String(H).padStart(2,'0')+":"+String(M).padStart(2,'0');}
+
+  /* ---- Qibla ---- */
+  function qibla(){
+    const dLng=KAABA_LNG-LNG;
+    const y=sin(dLng);
+    const x=cos(LAT)*tan(KAABA_LAT)-sin(LAT)*cos(dLng);
+    return fixA(atan2(y,x));
+  }
+  function qiblaDistance(){
+    const dLng=(KAABA_LNG-LNG)*D2R, la1=LAT*D2R, la2=KAABA_LAT*D2R;
+    const a=Math.sin((la2-la1)/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)**2;
+    return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  }
+  function compassDir(deg){
+    const dirs=["Utara","Timur Laut","Timur","Tenggara","Selatan","Barat Daya","Barat","Barat Laut"];
+    return dirs[Math.round(deg/45)%8];
+  }
+
+  /* ---- Hijri via Intl ---- */
+  function hijri(dateObj){
+    try{
+      const P=new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'}).formatToParts(dateObj);
+      const g=t=>P.find(p=>p.type===t)?.value||'';
+      const monthNum=parseInt(g('month'),10)||0, day=parseInt(g('day'),10)||0, year=parseInt(g('year'),10)||0;
+      const monthName=HIJRI_MONTHS[monthNum-1]||'';
+      return {day:day,monthNum:monthNum,month:monthName,year:year,full:day+' '+monthName+' '+year+' H'};
+    }catch(e){return {day:'',month:'',full:'—'};}
+  }
+  const HIJRI_MONTHS=["Muharram","Safar","Rabiul Awal","Rabiul Akhir","Jumadil Awal","Jumadil Akhir","Rajab","Sya'ban","Ramadan","Syawal","Zulkaidah","Zulhijah"];
+  const HIJRI_ARAB={"Muharram":"مُحَرَّم","Safar":"صَفَر","Rabiul Awal":"رَبِيع الأوّل","Rabiul Akhir":"رَبِيع الآخِر",
+    "Jumadil Awal":"جُمادى الأولى","Jumadil Akhir":"جُمادى الآخِرة","Rajab":"رَجَب","Sya'ban":"شَعْبان",
+    "Ramadan":"رَمَضان","Syawal":"شَوّال","Zulkaidah":"ذُو القَعْدة","Zulhijah":"ذُو الحِجّة"};
+  function arabNum(n){return String(n).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);}
+
+  const PRAYERS=[
+    {key:'imsak',name:'Imsak',arab:'إمساك',sun:true},
+    {key:'fajr',name:'Subuh',arab:'الفجر'},
+    {key:'sunrise',name:'Terbit',arab:'الشروق',sun:true},
+    {key:'dhuhr',name:'Dzuhur',arab:'الظهر'},
+    {key:'asr',name:'Ashar',arab:'العصر'},
+    {key:'maghrib',name:'Maghrib',arab:'المغرب'},
+    {key:'isha',name:'Isya',arab:'العشاء'}
+  ];
+  // for "current/next" logic use actual worship times (exclude imsak & terbit)
+  const SCHEDULE=['fajr','dhuhr','asr','maghrib','isha'];
+  const NAMEMAP={fajr:'Subuh',dhuhr:'Dzuhur',asr:'Ashar',maghrib:'Maghrib',isha:'Isya'};
+
+  let TIMES=computeTimes(new Date());
+
+  /* ---- Render prayers grid ---- */
+  function renderPrayers(){
+    const el=document.getElementById('prayers');
+    el.innerHTML=PRAYERS.map(p=>{
+      return `<div class="ptile ${p.sun?'sun':''}" data-k="${p.key}">
+        <div class="pname">${p.name}</div>
+        <div class="parab arabic">${p.arab}</div>
+        <div class="ptime mono">${hhmm(TIMES[p.key])}</div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---- Ticker ---- */
+  function buildTicker(){
+    const now=new Date();const curH=now.getHours()+now.getMinutes()/60+now.getSeconds()/3600;
+    let nextKey=SCHEDULE.find(k=>TIMES[k]>curH)||SCHEDULE[0];
+    const items=SCHEDULE.map(k=>{
+      const isNext=k===nextKey;
+      return `<span class="ticker__item ${isNext?'is-next':''}">${isNext?'⟶ Selanjutnya · ':''}${NAMEMAP[k]} <b>${hhmm(TIMES[k])}</b></span><span class="ticker__dot">•</span>`;
+    }).join('');
+    const loc=`<span class="ticker__item">📍 Jadwal Sholat Kota Depok — ${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'})}</span><span class="ticker__dot">•</span>`;
+    const one=loc+items;
+    document.getElementById('tickerTrack').innerHTML=one+one;
+  }
+
+  /* ---- Compass ---- */
+  function renderCompass(){
+    const az=qibla();
+    const svg=document.getElementById('compass');const cx=150,cy=150,R=130;
+    const ns='http://www.w3.org/2000/svg';
+    let parts=`
+      <circle cx="150" cy="150" r="138" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5"/>
+      <circle cx="150" cy="150" r="112" fill="none" stroke="var(--line)" stroke-width="1"/>`;
+    // ticks
+    for(let d=0;d<360;d+=15){
+      const a=(d-90)*D2R;const r1=(d%90===0)?100:118;const r2=130;
+      parts+=`<line x1="${cx+r1*Math.cos(a)}" y1="${cy+r1*Math.sin(a)}" x2="${cx+r2*Math.cos(a)}" y2="${cy+r2*Math.sin(a)}" stroke="var(--line-strong)" stroke-width="${d%90===0?1.6:0.8}"/>`;
+    }
+    const card=[['U',0],['T',90],['S',180],['B',270]];
+    card.forEach(([t,d])=>{const a=(d-90)*D2R;const rr=88;
+      parts+=`<text x="${cx+rr*Math.cos(a)}" y="${cy+rr*Math.sin(a)+5}" text-anchor="middle" font-family="Fraunces,serif" font-size="16" font-weight="600" fill="${t==='U'?'var(--accent)':'var(--muted)'}">${t}</text>`;});
+    // qibla needle
+    const qa=(az-90)*D2R;
+    const tipX=cx+118*Math.cos(qa), tipY=cy+118*Math.sin(qa);
+    const backX=cx-70*Math.cos(qa), backY=cy-70*Math.sin(qa);
+    const perpX=Math.cos(qa+Math.PI/2), perpY=Math.sin(qa+Math.PI/2);
+    parts+=`<line x1="${backX}" y1="${backY}" x2="${tipX}" y2="${tipY}" stroke="var(--gold)" stroke-width="2" opacity=".5"/>`;
+    parts+=`<polygon points="${tipX},${tipY} ${cx+12*perpX+30*Math.cos(qa)},${cy+12*perpY+30*Math.sin(qa)} ${cx-12*perpX+30*Math.cos(qa)},${cy-12*perpY+30*Math.sin(qa)}" fill="var(--accent)"/>`;
+    // kaaba icon at tip
+    parts+=`<g transform="translate(${tipX-9},${tipY-9})"><rect width="18" height="18" rx="2" fill="var(--gold)" stroke="#241a00" stroke-width="1"/><rect y="6" width="18" height="3" fill="#241a00"/></g>`;
+    parts+=`<circle cx="150" cy="150" r="7" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`;
+    parts+=`<text x="150" y="270" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" font-weight="700" fill="var(--gold)">KIBLAT ${az.toFixed(1)}°</text>`;
+    svg.innerHTML=parts;
+
+    document.getElementById('qiblaDeg').textContent=az.toFixed(1)+'°';
+    document.getElementById('qAz').textContent=az.toFixed(2)+'° UTSB';
+    document.getElementById('qDir').textContent=compassDir(az);
+    document.getElementById('qDist').textContent=Math.round(qiblaDistance()).toLocaleString('id-ID')+' km';
+  }
+
+  /* ---- Hijri months strip ---- */
+  function renderMonths(){
+    const h=hijri(new Date());
+    const el=document.getElementById('months');
+    el.innerHTML=HIJRI_MONTHS.map((m,i)=>{
+      const isCur=(i+1)===h.monthNum;
+      return `<div class="m ${isCur?'cur':''}"><span>Bulan ke-${i+1}</span>${m}</div>`;
+    }).join('');
+    document.getElementById('hijriFull').textContent=h.full;
+  }
+
+  /* ---- Live clock + countdown + highlight ---- */
+  let lastDay=new Date().getDate();
+  function tick(){
+    const now=new Date();
+    // recompute at midnight
+    if(now.getDate()!==lastDay){lastDay=now.getDate();TIMES=computeTimes(now);renderPrayers();buildTicker();renderMonths();updateDates();}
+    const hh=String(now.getHours()).padStart(2,'0');
+    const mm=String(now.getMinutes()).padStart(2,'0');
+    const ss=String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').firstChild.textContent=hh+':'+mm;
+    document.getElementById('clockSec').textContent=':'+ss;
+
+    const curH=now.getHours()+now.getMinutes()/60+now.getSeconds()/3600;
+    // highlight current schedule prayer
+    let currentKey=null, nextKey=null;
+    for(let i=0;i<SCHEDULE.length;i++){
+      if(TIMES[SCHEDULE[i]]<=curH) currentKey=SCHEDULE[i];
+      if(TIMES[SCHEDULE[i]]>curH && !nextKey) nextKey=SCHEDULE[i];
+    }
+    if(!nextKey) nextKey=SCHEDULE[0]; // tomorrow's subuh
+    document.querySelectorAll('.ptile').forEach(t=>t.classList.toggle('now',t.dataset.k===currentKey));
+
+    // countdown to next
+    let target=TIMES[nextKey];
+    let remH=target-curH; if(remH<0) remH+=24;
+    const rs=Math.floor(remH*3600);
+    const rH=String(Math.floor(rs/3600)).padStart(2,'0');
+    const rM=String(Math.floor((rs%3600)/60)).padStart(2,'0');
+    const rS=String(rs%60).padStart(2,'0');
+    document.getElementById('nextName').textContent=NAMEMAP[nextKey];
+    document.getElementById('nextRemain').textContent=rH+':'+rM+':'+rS;
+  }
+
+  function updateDates(){
+    const now=new Date();
+    document.getElementById('gregDate').textContent=now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const h=hijri(now);
+    const arab=HIJRI_ARAB[h.month]||'';
+    document.getElementById('hijriArab').textContent=(arabNum(h.day)+' '+arab+' '+arabNum(h.year)).trim();
+    document.getElementById('hijriId').textContent=h.full;
+    const dd=now.getDate();
+    document.getElementById('jadwalTitle').textContent=now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  }
+
+  /* ---- Starfield ---- */
+  function starfield(){
+    const c=document.getElementById('stars');const ctx=c.getContext('2d');
+    let w,h,stars=[];const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    function resize(){const r=c.getBoundingClientRect();w=c.width=r.width*devicePixelRatio;h=c.height=r.height*devicePixelRatio;
+      const n=Math.min(150,Math.floor(r.width*r.height/6500));stars=[];
+      for(let i=0;i<n;i++)stars.push({x:Math.random()*w,y:Math.random()*h,r:(Math.random()*1.3+0.3)*devicePixelRatio,
+        p:Math.random()*Math.PI*2,s:Math.random()*0.02+0.005});}
+    resize();window.addEventListener('resize',resize);
+    function draw(){ctx.clearRect(0,0,w,h);
+      for(const st of stars){const tw=reduce?0.8:(Math.sin(st.p)*0.4+0.6);st.p+=st.s;
+        ctx.globalAlpha=tw*0.9;ctx.fillStyle='#f2efe4';ctx.beginPath();ctx.arc(st.x,st.y,st.r,0,7);ctx.fill();}
+      ctx.globalAlpha=1;if(!reduce)requestAnimationFrame(draw);}
+    draw();
+  }
+
+  /* ---- Theme toggle ---- */
+  const sunI='<path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/><circle cx="12" cy="12" r="4"/>';
+  const moonI='<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+  function currentTheme(){return document.documentElement.getAttribute('data-theme')|| (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');}
+  function setIcon(){document.getElementById('themeIcon').innerHTML=currentTheme()==='dark'?sunI:moonI;}
+  document.getElementById('themeBtn').addEventListener('click',()=>{
+    const next=currentTheme()==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    try{localStorage.setItem('falak-theme',next);}catch(e){}
+    setIcon();renderCompass();
+  });
+  try{const saved=localStorage.getItem('falak-theme');if(saved)document.documentElement.setAttribute('data-theme',saved);}catch(e){}
+
+  /* ---- init ---- */
+  document.getElementById('year').textContent=new Date().getFullYear();
+  renderPrayers();buildTicker();renderCompass();renderMonths();updateDates();setIcon();starfield();
+  tick();setInterval(tick,1000);
+})();
+</script>
+
+</body>
+</html>

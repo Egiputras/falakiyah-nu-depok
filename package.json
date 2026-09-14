@@ -1,0 +1,15 @@
+{
+  "name": "falakiyah-nu-depok",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Website Lembaga Falakiyah NU Kota Depok — jadwal waktu sholat, arah kiblat, kalender Hijriyah, serta kabar hisab & rukyat. Situs statis (HTML/CSS/JS), tanpa build step.",
+  "scripts": {
+    "build": "echo \"Static site - no build step required.\"",
+    "dev": "npx --yes serve public",
+    "start": "npx --yes serve public"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}
