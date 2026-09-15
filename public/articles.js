@@ -3,6 +3,7 @@
    belum ada artikel, bagian berita tetap memakai kartu bawaan (fallback). */
 (async function () {
   "use strict";
+  const BASE_TITLE = document.title;
   const cfg = window.FALAK_FB;
   if (!cfg || !cfg.apiKey) return; // belum dikonfigurasi -> pakai konten statis
 
@@ -32,6 +33,12 @@
   injectStyles();
   renderGrid(arts);
   buildModal();
+
+  // Buka artikel langsung bila URL memuat ?artikel=<id> (link yang dibagikan)
+  try {
+    const wantId = new URLSearchParams(location.search).get("artikel");
+    if (wantId) { const a = arts.find((x) => x.id === wantId); if (a) openModal(a); }
+  } catch (_) {}
 
   function fmtDate(a) {
     try {
@@ -95,6 +102,15 @@
       '<div class="art-modal__meta" id="artModalMeta"></div>' +
       '<img class="art-modal__img" id="artModalImg" alt="" hidden>' +
       '<div class="art-modal__body" id="artModalBody"></div>' +
+      '<div class="art-share">' +
+      '<span class="art-share__lbl">Bagikan:</span>' +
+      '<button class="art-share__b native" id="shNative" type="button" hidden>Bagikan…</button>' +
+      '<a class="art-share__b wa" id="shWa" target="_blank" rel="noopener">WhatsApp</a>' +
+      '<a class="art-share__b fb" id="shFb" target="_blank" rel="noopener">Facebook</a>' +
+      '<a class="art-share__b tg" id="shTg" target="_blank" rel="noopener">Telegram</a>' +
+      '<a class="art-share__b x" id="shX" target="_blank" rel="noopener">X</a>' +
+      '<button class="art-share__b copy" id="shCopy" type="button">Salin link</button>' +
+      "</div>" +
       "</div>";
     document.body.appendChild(m);
     m.addEventListener("click", (e) => { if (e.target === m || e.target.classList.contains("art-modal__close")) closeModal(); });
@@ -108,10 +124,37 @@
     const im = document.getElementById("artModalImg");
     if (a.image) { im.src = a.image; im.hidden = false; } else { im.removeAttribute("src"); im.hidden = true; }
     document.getElementById("artModalBody").textContent = a.body || a.summary || "";
+
+    // ---- Bagikan ke sosial media ----
+    const shareUrl = location.origin + location.pathname + "?artikel=" + encodeURIComponent(a.id);
+    const title = a.title || "Artikel Lembaga Falakiyah NU Kota Depok";
+    const t = encodeURIComponent(title), u = encodeURIComponent(shareUrl), tu = encodeURIComponent(title + " — " + shareUrl);
+    document.getElementById("shWa").href = "https://wa.me/?text=" + tu;
+    document.getElementById("shFb").href = "https://www.facebook.com/sharer/sharer.php?u=" + u;
+    document.getElementById("shTg").href = "https://t.me/share/url?url=" + u + "&text=" + t;
+    document.getElementById("shX").href = "https://twitter.com/intent/tweet?text=" + t + "&url=" + u;
+    document.getElementById("shCopy").onclick = () => {
+      if (navigator.clipboard) navigator.clipboard.writeText(shareUrl).then(() => toast("Link disalin")).catch(() => toast("Gagal menyalin"));
+      else toast(shareUrl);
+    };
+    const nat = document.getElementById("shNative");
+    if (navigator.share) { nat.hidden = false; nat.onclick = () => navigator.share({ title: title, text: title, url: shareUrl }).catch(() => {}); }
+    else { nat.hidden = true; }
+    try { history.replaceState(null, "", shareUrl); } catch (_) {}
+    document.title = title + " — Falakiyah NU Depok";
+
     const m = document.getElementById("artModal"); m.hidden = false; document.body.style.overflow = "hidden";
   }
   function closeModal() {
     const m = document.getElementById("artModal"); if (m) m.hidden = true; document.body.style.overflow = "";
+    try { history.replaceState(null, "", location.origin + location.pathname); } catch (_) {}
+    document.title = BASE_TITLE;
+  }
+  function toast(msg) {
+    let t = document.getElementById("artToast");
+    if (!t) { t = document.createElement("div"); t.id = "artToast"; t.className = "art-toast"; document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1900);
   }
 
   function injectStyles() {
@@ -120,6 +163,15 @@
       ".art-open{transition:transform .18s ease,border-color .18s ease}" +
       ".art-modal{position:fixed;inset:0;z-index:200;background:rgba(8,16,25,.62);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:5vh 18px;overflow-y:auto}" +
       ".art-modal[hidden]{display:none}" +
+      ".art-share{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}" +
+      ".art-share__lbl{font-size:.82rem;font-weight:600;color:var(--muted);margin-right:2px}" +
+      ".art-share__b{font-family:inherit;font-size:.82rem;font-weight:600;text-decoration:none;border:1px solid var(--line-strong);color:var(--ink);background:var(--surface-2);padding:.42rem .85rem;border-radius:999px;cursor:pointer;line-height:1;transition:border-color .15s,color .15s}" +
+      ".art-share__b:hover{border-color:var(--accent);color:var(--accent)}" +
+      ".art-share__b.wa:hover{border-color:#25d366;color:#1a9e4b}" +
+      ".art-share__b.native{background:var(--accent);color:#fff;border-color:var(--accent)}" +
+      ".art-share__b.native:hover{filter:brightness(1.08);color:#fff}" +
+      ".art-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);background:var(--ink);color:var(--bg);font-size:.85rem;font-weight:600;padding:.6rem 1.1rem;border-radius:10px;z-index:300;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease}" +
+      ".art-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}" +
       ".art-modal__box{background:var(--surface);color:var(--ink);max-width:680px;width:100%;border:1px solid var(--line);border-radius:16px;padding:32px 30px 36px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.35)}" +
       ".art-modal__close{position:absolute;top:14px;right:16px;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:1.4rem;line-height:1;cursor:pointer}" +
       ".art-modal__close:hover{border-color:var(--accent)}" +
