@@ -119,6 +119,7 @@
       ".art-meta{margin-top:auto;padding-top:10px;font-size:.78rem;color:var(--faint)}" +
       ".art-open{transition:transform .18s ease,border-color .18s ease}" +
       ".art-modal{position:fixed;inset:0;z-index:200;background:rgba(8,16,25,.62);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:5vh 18px;overflow-y:auto}" +
+      ".art-modal[hidden]{display:none}" +
       ".art-modal__box{background:var(--surface);color:var(--ink);max-width:680px;width:100%;border:1px solid var(--line);border-radius:16px;padding:32px 30px 36px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.35)}" +
       ".art-modal__close{position:absolute;top:14px;right:16px;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:1.4rem;line-height:1;cursor:pointer}" +
       ".art-modal__close:hover{border-color:var(--accent)}" +
