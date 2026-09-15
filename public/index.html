@@ -208,11 +208,41 @@
   /* calendar strip */
   .cal-band{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .cal-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:44px;align-items:center}
-  .months{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .months .m{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:.82rem;font-weight:600}
-  .months .m.cur{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
-  .months .m span{display:block;font-size:.66rem;font-weight:500;color:var(--faint)}
-  .months .m.cur span{color:var(--accent)}
+  .cal2{display:grid;grid-template-columns:1.65fr 1fr;gap:26px;align-items:start;margin-top:28px}
+  .cal{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .cal__head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .cal__title{text-align:center;line-height:1.22}
+  .cal__title strong{display:block;font-family:"Fraunces",serif;font-size:1.18rem}
+  .cal__title span{font-size:.78rem;color:var(--muted)}
+  .cal__nav{width:38px;height:38px;flex:none;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);font-size:1.25rem;cursor:pointer;line-height:1}
+  .cal__nav:hover{border-color:var(--accent);color:var(--accent)}
+  .cal__dow,.cal__grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal__dow{margin-bottom:6px}
+  .cal__dow span{text-align:center;font-size:.7rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--faint);padding:4px 0}
+  .cal__dow span.fri{color:var(--accent)}
+  .cell{position:relative;min-height:52px;border-radius:9px;border:1px solid transparent;background:var(--surface-2);padding:5px 6px;display:flex;flex-direction:column;justify-content:space-between}
+  .cell .g{font-weight:700;font-size:.95rem;font-variant-numeric:tabular-nums;line-height:1}
+  .cell .h{font-size:.66rem;color:var(--muted);font-variant-numeric:tabular-nums;align-self:flex-end;line-height:1}
+  .cell.out{opacity:.36}
+  .cell.fri .g{color:var(--accent)}
+  .cell.mstart .h{color:var(--accent);font-weight:700}
+  .cell.today{border-color:var(--now);background:var(--gold-soft);box-shadow:0 0 0 1px var(--now)}
+  .cell.today .g{color:var(--now)}
+  .cell.event::after{content:"";position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .cell.event.today::after{background:var(--now)}
+  .cal__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;flex-wrap:wrap}
+  .cal__today{font-family:inherit;font-weight:600;font-size:.82rem;padding:.42rem .85rem;border-radius:9px;border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink);cursor:pointer}
+  .cal__today:hover{border-color:var(--accent)}
+  .cal__legend{font-size:.74rem;color:var(--muted);display:flex;align-items:center;gap:14px}
+  .cal__legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .cal__legend .dot-today{background:var(--now)}
+  .cal__legend .dot-event{background:var(--accent)}
+  .cal__events{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow)}
+  .cal__events h3{font-family:"Fraunces",serif;font-size:1.05rem;margin:0 0 14px}
+  .cal__events ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+  .cal__events li{display:flex;gap:11px;align-items:baseline;font-size:.88rem;line-height:1.4}
+  .cal__events li .d{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);flex:none;font-size:.8rem;white-space:nowrap}
+  .cal__events li.none{color:var(--faint)}
 
   /* footer */
   footer.site{background:var(--hero-2);color:var(--hero-ink);padding:52px 0 30px;margin-top:8px}
@@ -231,7 +261,8 @@
     .qibla-grid{grid-template-columns:1fr;gap:30px}
     .compass{width:250px;height:250px}
     .news-grid{grid-template-columns:1fr 1fr}
-    .featured,.cal-grid{grid-template-columns:1fr}
+    .featured,.cal-grid,.cal2{grid-template-columns:1fr}
+    .cell{min-height:46px}
     .foot-grid{grid-template-columns:1fr 1fr}
   }
   @media (max-width:640px){
@@ -418,16 +449,34 @@
 
 <!-- ============ KALENDER HIJRIYAH ============ -->
 <section class="band cal-band" id="kalender">
-  <div class="wrap cal-grid">
-    <div class="sec-head" style="margin-bottom:0">
+  <div class="wrap">
+    <div class="sec-head" style="max-width:62ch">
       <span class="eyebrow">Tanggalan Hijriyah</span>
-      <h2>Penanggalan Bulan Qomariyah</h2>
-      <p>Kalender Hijriyah dihitung berdasar peredaran bulan (qomariyah) sepanjang 12 bulan. Bulan berjalan ditandai di samping.</p>
-      <div class="callout" style="margin-top:18px">
+      <h2>Kalender Hijriyah</h2>
+      <p>Penanggalan bulan qomariyah berdampingan dengan tanggal Masehi. Tanggal hari ini disorot; hari Jumat &amp; hari besar Islam ditandai.</p>
+      <div class="callout" style="margin-top:16px">
         <strong>Tanggal hari ini:</strong> <span id="hijriFull">—</span>
       </div>
     </div>
-    <div class="months" id="months"></div>
+    <div class="cal2">
+      <div class="cal">
+        <div class="cal__head">
+          <button class="cal__nav" id="calPrev" type="button" aria-label="Bulan sebelumnya">&#8249;</button>
+          <div class="cal__title"><strong id="calGreg">—</strong><span id="calHijri">—</span></div>
+          <button class="cal__nav" id="calNext" type="button" aria-label="Bulan berikutnya">&#8250;</button>
+        </div>
+        <div class="cal__dow" id="calDow"></div>
+        <div class="cal__grid" id="calGrid"></div>
+        <div class="cal__foot">
+          <button class="cal__today" id="calToday" type="button">Hari ini</button>
+          <span class="cal__legend"><span><i class="dot-today"></i>Hari ini</span><span><i class="dot-event"></i>Hari besar</span></span>
+        </div>
+      </div>
+      <aside class="cal__events">
+        <h3>Hari Penting Bulan Ini</h3>
+        <ul id="calEvents"></ul>
+      </aside>
+    </div>
   </div>
 </section>
 
@@ -680,14 +729,51 @@
     });
   }
 
-  function renderMonths(){
-    const h=hijri(new Date());
-    const el=document.getElementById('months');
-    el.innerHTML=HIJRI_MONTHS.map((m,i)=>{
-      const isCur=(i+1)===h.monthNum;
-      return `<div class="m ${isCur?'cur':''}"><span>Bulan ke-${i+1}</span>${m}</div>`;
-    }).join('');
-    document.getElementById('hijriFull').textContent=h.full;
+  const HIJRI_EVENTS={
+    '1-1':'Tahun Baru Islam','1-10':'Hari Asyura','3-12':'Maulid Nabi Muhammad SAW',
+    '7-27':'Isra Mikraj','8-15':'Nisfu Syaban','9-1':'Awal Ramadan','9-17':'Nuzulul Quran',
+    '10-1':'Idulfitri (1 Syawal)','12-9':'Wukuf Arafah','12-10':'Iduladha',
+    '12-11':'Hari Tasyrik','12-12':'Hari Tasyrik','12-13':'Hari Tasyrik'
+  };
+  const DOW=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  let calDate=new Date();
+  function sameYMD(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+  function renderCalendar(){
+    const grid=document.getElementById('calGrid'); if(!grid) return;
+    const dow=document.getElementById('calDow');
+    if(dow && !dow.childElementCount) dow.innerHTML=DOW.map((d,i)=>`<span class="${i===5?'fri':''}">${d}</span>`).join('');
+    const y=calDate.getFullYear(), m=calDate.getMonth();
+    const first=new Date(y,m,1), today=new Date();
+    const start=new Date(y,m,1-first.getDay());
+    document.getElementById('calGreg').textContent=first.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+    const hs=hijri(first), he=hijri(new Date(y,m+1,0));
+    document.getElementById('calHijri').textContent = (hs.monthNum===he.monthNum && hs.year===he.year)
+      ? hs.month+' '+hs.year+' H' : hs.month+' – '+he.month+' '+he.year+' H';
+    let html='', events=[];
+    for(let i=0;i<42;i++){
+      const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i);
+      const inMonth=d.getMonth()===m, H=hijri(d), ev=HIJRI_EVENTS[H.monthNum+'-'+H.day];
+      const cls=['cell'];
+      if(!inMonth)cls.push('out');
+      if(d.getDay()===5)cls.push('fri');
+      if(H.day===1)cls.push('mstart');
+      if(sameYMD(d,today))cls.push('today');
+      if(ev&&inMonth)cls.push('event');
+      html+=`<div class="${cls.join(' ')}" title="${d.getDate()} ${d.toLocaleDateString('id-ID',{month:'long'})} · ${H.full}${ev?' · '+ev:''}"><span class="g">${d.getDate()}</span><span class="h">${H.day}</span></div>`;
+      if(ev&&inMonth) events.push({greg:d,name:ev});
+    }
+    grid.innerHTML=html;
+    const ul=document.getElementById('calEvents');
+    if(ul) ul.innerHTML = events.length
+      ? events.map(e=>`<li><span class="d">${e.greg.getDate()} ${e.greg.toLocaleDateString('id-ID',{month:'short'})}</span><span>${e.name}</span></li>`).join('')
+      : '<li class="none">Tidak ada hari besar Islam pada bulan ini.</li>';
+    const hf=document.getElementById('hijriFull'); if(hf) hf.textContent=hijri(today).full;
+  }
+  function initCalendar(){
+    const p=document.getElementById('calPrev'), n=document.getElementById('calNext'), t=document.getElementById('calToday');
+    if(p)p.addEventListener('click',()=>{calDate=new Date(calDate.getFullYear(),calDate.getMonth()-1,1);renderCalendar();});
+    if(n)n.addEventListener('click',()=>{calDate=new Date(calDate.getFullYear(),calDate.getMonth()+1,1);renderCalendar();});
+    if(t)t.addEventListener('click',()=>{calDate=new Date();renderCalendar();});
   }
 
   /* ---- Live clock + countdown + highlight ---- */
@@ -695,7 +781,7 @@
   function tick(){
     const now=new Date();
     // recompute at midnight
-    if(now.getDate()!==lastDay){lastDay=now.getDate();TIMES=computeTimes(now);renderPrayers();buildTicker();renderMonths();updateDates();}
+    if(now.getDate()!==lastDay){lastDay=now.getDate();TIMES=computeTimes(now);renderPrayers();buildTicker();renderCalendar();updateDates();}
     const hh=String(now.getHours()).padStart(2,'0');
     const mm=String(now.getMinutes()).padStart(2,'0');
     const ss=String(now.getSeconds()).padStart(2,'0');
@@ -765,7 +851,7 @@
 
   /* ---- init ---- */
   document.getElementById('year').textContent=new Date().getFullYear();
-  renderPrayers();buildTicker();renderCompass();renderMonths();updateDates();setIcon();starfield();initCompassBtn();
+  renderPrayers();buildTicker();renderCompass();renderCalendar();updateDates();setIcon();starfield();initCompassBtn();initCalendar();
   tick();setInterval(tick,1000);
 })();
 </script>
